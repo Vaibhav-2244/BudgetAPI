@@ -10,8 +10,8 @@ def get_db_connection():
         conn = pyodbc.connect(Config.CONNECTION_STRING)
         return conn
     except Exception as e:
-        print("Connection failed:", e)
-        return None
+        print("❌ Connection failed:", str(e))  # Full error message
+        raise  # Re-raise to show 500 error trace in Azure logs
 
 # ------------------ USERS ------------------
 

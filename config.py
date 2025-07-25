@@ -1,16 +1,19 @@
 # config.py
-
-import pyodbc
+import os
 
 class Config:
-    
-    import os
     DRIVER = '{ODBC Driver 17 for SQL Server}'
-    SERVER = os.getenv('DB_SERVER')  #budgetserver123.databases.windows.net
-    DATABASE = os.getenv('DB_DATABASE') #budgetingdb
-    USERNAME = os.getenv('DB_USERNAME')  #budgetadmin
-    PASSWORD = os.getenv('DB_PASSWORD') #budget@123
-    
+    SERVER = os.getenv('DB_SERVER')
+    DATABASE = os.getenv('DB_DATABASE')
+    USERNAME = os.getenv('DB_USERNAME')
+    PASSWORD = os.getenv('DB_PASSWORD')
+
+    print("🔍 ENV CHECK:")
+    print("SERVER:", SERVER)
+    print("DATABASE:", DATABASE)
+    print("USERNAME:", USERNAME)
+    print("PASSWORD:", "✔️" if PASSWORD else "❌")  # Don't print raw password
+
     CONNECTION_STRING = (
         f'DRIVER={DRIVER};'
         f'SERVER={SERVER};'
@@ -18,4 +21,3 @@ class Config:
         f'UID={USERNAME};'
         f'PWD={PASSWORD};'
     )
-
