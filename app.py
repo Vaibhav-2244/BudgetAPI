@@ -43,6 +43,36 @@ def get_users():
     conn.close()
     return jsonify(users)
 
+@app.route('/login', methods=['POST'])
+def login_user():
+    try:
+        data = request.get_json()
+        email = data['email']
+        password = data['password']
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT user_id, username FROM users
+            WHERE email = ? AND password_hash = ?
+        """, (email, password))
+        user = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if user:
+            return jsonify({
+                "message": "Login successful",
+                "user_id": user[0],
+                "username": user[1]
+            }), 200
+        else:
+            return jsonify({"error": "Invalid credentials"}), 401
+    except Exception as e:
+        print("❌ Login Error:", str(e))
+        return jsonify({"error": "Internal Server Error", "detail": str(e)}), 500
+
+
 # ------------------ INCOME ------------------
 
 @app.route('/income', methods=['POST'])
