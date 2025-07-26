@@ -37,8 +37,14 @@ def create_user():
 def get_users():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT user_id, username, email FROM users")
-    users = [{"id": row[0], "username": row[1], "email": row[2]} for row in cursor.fetchall()]
+    cursor.execute("SELECT user_id, username, email, password_hash FROM users")
+    users = [{
+        "id": row[0],
+        "username": row[1],
+        "email": row[2],
+        "password": row[3]  # ⚠️ expose password temporarily for testing
+    } for row in cursor.fetchall()]
+
     cursor.close()
     conn.close()
     return jsonify(users)
