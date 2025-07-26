@@ -242,6 +242,44 @@ def get_alerts(user_id):
     conn.close()
     return jsonify(alerts)
 
+@app.route('/summary/<int:user_id>', methods=['GET'])
+def get_user_summary(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Get username
+    cursor.execute("SELECT username FROM users WHERE user_id = ?", (user_id,))
+    user_row = cursor.fetchone()
+    if not user_row:
+        cursor.close()
+        conn.close()
+        return jsonify({"error": "User not found"}), 404
+
+    username = user_row[0]
+
+    # Get total income
+    cursor.execute("SELECT COALESCE(SUM(amount), 0) FROM income WHERE user_id = ?", (user_id,))
+    total_income = cursor.fetchone()[0]
+
+    # Get total expenses
+    cursor.execute("SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE user_id = ?", (user_id,))
+    total_expense = cursor.fetchone()[0]
+
+    # Get total savings (sum of saved_amount)
+    cursor.execute("SELECT COALESCE(SUM(saved_amount), 0) FROM savings WHERE user_id = ?", (user_id,))
+    total_saving = cursor.fetchone()[0]
+
+    cursor.close()
+    conn.close()
+
+    return jsonify({
+        "username": username,
+        "total_income": float(total_income),
+        "total_expense": float(total_expense),
+        "total_saving": float(total_saving)
+    })
+
+
 # ------------------ ROOT ------------------
 
 @app.route('/')
